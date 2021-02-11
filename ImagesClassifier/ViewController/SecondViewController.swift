@@ -46,12 +46,9 @@ class SecondViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     }
     
     @IBAction func makeBoom(_ sender: Any) {
-        rocketWasLaunched = true
         guard self.boom == nil else { return }
+        rocketWasLaunched = true
         createViews()
-//        let face = results.first!
-//        let frame = self.previewLayer.layerRectConverted(fromMetadataOutputRect: face.boundingBox)
-//        animateRocketTo(frame: frame)
     }
     
     private func configureCamera() {
@@ -112,10 +109,17 @@ class SecondViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             facesBoundingBoxes.forEach({ faceBoundingBox in self.view.layer.addSublayer(faceBoundingBox) })
             self.drawings = facesBoundingBoxes
         
-        if rocketWasLaunched, let face = faceObservations.first {
-            let frame = self.previewLayer.layerRectConverted(fromMetadataOutputRect: face.boundingBox)
+        if rocketWasLaunched, rocket != nil, !faceObservations.isEmpty {
+            var faces: [CGRect] = []
+            faceObservations.forEach { (face) in
+                let frame = self.previewLayer.layerRectConverted(fromMetadataOutputRect: face.boundingBox)
+                faces.append(frame)
+            }
+            faces.sort {
+                return distance($0.origin, rocket!.center) > distance($1.origin, rocket!.center)
+            }
             print("go")
-            animateRocketTo(frame: frame)
+            animateRocketTo(frame: faces.first!)
         }
     }
     
@@ -136,29 +140,29 @@ class SecondViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     }
     
     private func animateRocketTo(frame: CGRect){
-        guard self.boom != nil, self.rocket != nil, self.rocketWasLaunched == true else { return }
-        self.view.layer.removeAllAnimations()
-        self.boom!.center = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height / 2)
+        print("animation started")
+        guard let boom = self.boom, let rocket = self.rocket, self.rocketWasLaunched == true else { return }
+        boom.center = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height / 2)
         let distance = view.frame.width / min(frame.width, frame.height)
         let duration = Double(distance) * 0.5
-        print("animation started")
+        
         UIView.animate(withDuration: duration, delay: 0, options: .curveLinear) {
-            self.rocket!.center = self.boom!.center
-        } completion: { (_) in
+            rocket.center = self.boom!.center
+        } completion: { (isCompleted) in
             print("completion")
-            self.rocket!.alpha = 0
+            rocket.alpha = 0
             self.rocketWasLaunched = false
-//            self.rocket = nil
+            self.rocket = nil
             print("Mission complete")
             UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut) {
-                self.boom!.alpha = 1
-                self.boom!.transform = CGAffineTransform(scaleX: 1, y: 1)
+                boom.alpha = 1
+                boom.transform = CGAffineTransform(scaleX: 1, y: 1)
             } completion: { (_) in
                 UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn) {
-                    self.boom!.alpha = 0
-                    self.boom!.transform = CGAffineTransform(scaleX: 2, y: 2)
+                    boom.alpha = 0
+                    boom.transform = CGAffineTransform(scaleX: 2, y: 2)
                 } completion: { (_) in
-//                    self.boom = nil
+                    self.boom = nil
                 }
             }
         }
@@ -169,5 +173,11 @@ class SecondViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             return
         }
         self.detectFace(in: pixelBuffer)
+    }
+    
+    func distance(_ a: CGPoint, _ b: CGPoint) -> CGFloat {
+        let xDist = a.x - b.x
+        let yDist = a.y - b.y
+        return CGFloat(sqrt(xDist * xDist + yDist * yDist))
     }
 }
