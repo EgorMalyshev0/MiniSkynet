@@ -20,6 +20,8 @@
 		7006687725B6206300713971 /* FaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7006687625B6206300713971 /* FaceView.swift */; };
 		708A5F6425ACE2D8002BAE21 /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708A5F6325ACE2D8002BAE21 /* SecondViewController.swift */; };
 		709B80BB25AB875D007B9F29 /* MyImageClassifier.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 709B80BA25AB875D007B9F29 /* MyImageClassifier.mlmodel */; };
+		DE104D6E25D661C1004E92E8 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE104D6D25D661C1004E92E8 /* MapViewController.swift */; };
+		DEBD0AD125D69AAB00F8C2B7 /* MyTabularRegressor.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = DEBD0AD025D69AAB00F8C2B7 /* MyTabularRegressor.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 		7006687625B6206300713971 /* FaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceView.swift; sourceTree = "<group>"; };
 		708A5F6325ACE2D8002BAE21 /* SecondViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondViewController.swift; sourceTree = "<group>"; };
 		709B80BA25AB875D007B9F29 /* MyImageClassifier.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = MyImageClassifier.mlmodel; path = ../../MyImageClassifier.mlmodel; sourceTree = "<group>"; };
+		DE104D6D25D661C1004E92E8 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		DEBD0AD025D69AAB00F8C2B7 /* MyTabularRegressor.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = MyTabularRegressor.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +106,7 @@
 			children = (
 				2CC5317823CEE7CD0017487F /* ViewController.swift */,
 				708A5F6325ACE2D8002BAE21 /* SecondViewController.swift */,
+				DE104D6D25D661C1004E92E8 /* MapViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -118,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				709B80BA25AB875D007B9F29 /* MyImageClassifier.mlmodel */,
+				DEBD0AD025D69AAB00F8C2B7 /* MyTabularRegressor.mlmodel */,
 				2CC5317D23CEE7D20017487F /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -317,7 +323,9 @@
 				2CA3F68223F3D7740039B741 /* ImageClassifierService.swift in Sources */,
 				709B80BB25AB875D007B9F29 /* MyImageClassifier.mlmodel in Sources */,
 				2CC5317923CEE7CD0017487F /* ViewController.swift in Sources */,
+				DEBD0AD125D69AAB00F8C2B7 /* MyTabularRegressor.mlmodel in Sources */,
 				7006687725B6206300713971 /* FaceView.swift in Sources */,
+				DE104D6E25D661C1004E92E8 /* MapViewController.swift in Sources */,
 				2CA3F68D23F3E3CE0039B741 /* ClassifierResultModel.swift in Sources */,
 				708A5F6425ACE2D8002BAE21 /* SecondViewController.swift in Sources */,
 				2CC5317523CEE7CD0017487F /* AppDelegate.swift in Sources */,
