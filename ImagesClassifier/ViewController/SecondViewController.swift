@@ -19,19 +19,9 @@ class SecondViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     private let videoDataOutput = AVCaptureVideoDataOutput()
 
     private var drawings: [CAShapeLayer] = []
-    private var rocket: UIView?
-    private var boom: UIView?
+    private var rocket: Rocket?
+    private var boom: Boom?
     
-    var rocketWasLaunched = false {
-        didSet{
-            if rocketWasLaunched == true{
-                print("rocket is in the air")
-            } else {
-                print("rocket was boom")
-            }
-        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         configureCamera()
@@ -47,7 +37,7 @@ class SecondViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     
     @IBAction func makeBoom(_ sender: Any) {
         guard self.boom == nil else { return }
-        rocketWasLaunched = true
+        rocket?.isLaunched = true
         createViews()
     }
     
@@ -109,14 +99,14 @@ class SecondViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
             facesBoundingBoxes.forEach({ faceBoundingBox in self.view.layer.addSublayer(faceBoundingBox) })
             self.drawings = facesBoundingBoxes
         
-        if rocketWasLaunched, rocket != nil, !faceObservations.isEmpty {
+        if let rocket = self.rocket, rocket.isLaunched, !faceObservations.isEmpty {
             var faces: [CGRect] = []
             faceObservations.forEach { (face) in
                 let frame = self.previewLayer.layerRectConverted(fromMetadataOutputRect: face.boundingBox)
                 faces.append(frame)
             }
             faces.sort {
-                return distance($0.origin, rocket!.center) > distance($1.origin, rocket!.center)
+                return distance($0.origin, rocket.center) > distance($1.origin, rocket.center)
             }
             print("go")
             animateRocketTo(frame: faces.first!)
@@ -124,15 +114,9 @@ class SecondViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     }
     
     private func createViews(){
-        let rocket = UIImageView(image: UIImage(named: "rocket"))
-        let rocketSize = CGSize(width: 117, height: 78)
-        rocket.frame = CGRect(origin: CGPoint.zero, size: rocketSize)
-        rocket.center = CGPoint(x: view.frame.width / 2, y: boomButton.frame.origin.y + boomButton.frame.height/2)
-        let boom = UIImageView(image: UIImage(named: "boom"))
-        let boomSize = CGSize(width: 200, height: 200)
-        boom.frame = CGRect(origin: CGPoint.zero, size: boomSize)
-        boom.alpha = 0
-        boom.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+        let rocketStartPoint = CGPoint(x: view.frame.width / 2, y: boomButton.frame.origin.y + boomButton.frame.height/2)
+        let rocket = Rocket(rocketStartPoint: rocketStartPoint)
+        let boom = Boom()
         self.rocket = rocket
         self.boom = boom
         view.addSubview(rocket)
@@ -141,30 +125,32 @@ class SecondViewController: UIViewController, AVCaptureVideoDataOutputSampleBuff
     
     private func animateRocketTo(frame: CGRect){
         print("animation started")
-        guard let boom = self.boom, let rocket = self.rocket, self.rocketWasLaunched == true else { return }
+        guard let boom = self.boom, let rocket = self.rocket, rocket.isLaunched == true else { return }
         boom.center = CGPoint(x: frame.origin.x + frame.width / 2, y: frame.origin.y + frame.height / 2)
         let distance = view.frame.width / min(frame.width, frame.height)
         let duration = Double(distance) * 0.5
         
         UIView.animate(withDuration: duration, delay: 0, options: .curveLinear) {
-            rocket.center = self.boom!.center
+            rocket.center = boom.center
         } completion: { (isCompleted) in
             print("completion")
             rocket.alpha = 0
-            self.rocketWasLaunched = false
+            rocket.isLaunched = false
             self.rocket = nil
             print("Mission complete")
-            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut) {
-                boom.alpha = 1
-                boom.transform = CGAffineTransform(scaleX: 1, y: 1)
-            } completion: { (_) in
-                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn) {
-                    boom.alpha = 0
-                    boom.transform = CGAffineTransform(scaleX: 2, y: 2)
-                } completion: { (_) in
-                    self.boom = nil
-                }
-            }
+            boom.isLaunched = true
+            self.boom = nil
+//            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseOut) {
+//                boom.alpha = 1
+//                boom.transform = CGAffineTransform(scaleX: 1, y: 1)
+//            } completion: { (_) in
+//                UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseIn) {
+//                    boom.alpha = 0
+//                    boom.transform = CGAffineTransform(scaleX: 2, y: 2)
+//                } completion: { (_) in
+//                    self.boom = nil
+//                }
+//            }
         }
     }
     
